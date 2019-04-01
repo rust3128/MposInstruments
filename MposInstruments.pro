@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui sql
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MposInstruments
@@ -26,13 +25,20 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    LoggingCategories/loggingcategories.cpp \
+    DataBases/databases.cpp \
+    ConnectionSettingDialog/connectionsettingdialog.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    LoggingCategories/loggingcategories.h \
+    DataBases/databases.h \
+    ConnectionSettingDialog/connectionsettingdialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    ConnectionSettingDialog/connectionsettingdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

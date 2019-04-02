@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     m_logFile.data()->open(QFile::Append | QFile::Text);
     // Устанавливаем обработчик
     qInstallMessageHandler(messageHandler);
-
+    qInfo(logInfo()) << "Запуск программы.";
 #ifndef QT_NO_TRANSLATION
     QString translatorFileName = QLatin1String("qt_");
     translatorFileName += QLocale::system().name();
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    qInfo(logInfo()) << QObject::tr("Запуск программы.");
+
     MainWindow w;
     w.show();
 

@@ -9,10 +9,14 @@ class DataBases : public QObject
 public:
     explicit DataBases(QObject *parent = nullptr);
     bool connectCentralDatabase();
+    bool connectOptions();
+
 
 signals:
 
 public slots:
+
+
 };
 
 #endif // DATABASES_H

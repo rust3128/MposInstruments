@@ -2,6 +2,8 @@
 #define CONNECTIONSETTINGDIALOG_H
 
 #include <QDialog>
+#include <QAbstractButton>
+#include <QSettings>
 
 namespace Ui {
 class ConnectionSettingDialog;
@@ -15,8 +17,16 @@ public:
     explicit ConnectionSettingDialog(QWidget *parent = nullptr);
     ~ConnectionSettingDialog();
 
+private slots:
+    void on_buttonBox_clicked(QAbstractButton *button);
+
 private:
     Ui::ConnectionSettingDialog *ui;
+
+
+private:
+    void readConnData();
+    void saveConnData();
 };
 
 #endif // CONNECTIONSETTINGDIALOG_H

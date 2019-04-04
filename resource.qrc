@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/fuel.png</file>
+        <file>Icons/fuel_big.png</file>
+        <file>Icons/SelectAl.png</file>
+    </qresource>
+</RCC>

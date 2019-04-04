@@ -23,6 +23,13 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Инструментарий</string>
+    </property>
+    <addaction name="actionFuelName"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -31,10 +38,25 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionFuelName"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionFuelName">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/Icons/fuel.png</normaloff>:/Icons/fuel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Наименование топлива</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

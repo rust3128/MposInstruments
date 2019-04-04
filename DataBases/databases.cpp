@@ -21,7 +21,7 @@ bool DataBases::connectCentralDatabase()
     bool result = true;
     QSettings settings("MposInstruments.cfg", QSettings::IniFormat);
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QIBASE","cental");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QIBASE","central");
 
     settings.beginGroup("DATABASE");
     db.setHostName(settings.value("HostName").toString());

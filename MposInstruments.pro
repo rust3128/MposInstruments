@@ -28,19 +28,25 @@ SOURCES += \
         mainwindow.cpp \
     LoggingCategories/loggingcategories.cpp \
     DataBases/databases.cpp \
-    ConnectionSettingDialog/connectionsettingdialog.cpp
+    ConnectionSettingDialog/connectionsettingdialog.cpp \
+    FuelNameDialog/fuelnamedialog.cpp
 
 HEADERS += \
         mainwindow.h \
     LoggingCategories/loggingcategories.h \
     DataBases/databases.h \
-    ConnectionSettingDialog/connectionsettingdialog.h
+    ConnectionSettingDialog/connectionsettingdialog.h \
+    FuelNameDialog/fuelnamedialog.h
 
 FORMS += \
         mainwindow.ui \
-    ConnectionSettingDialog/connectionsettingdialog.ui
+    ConnectionSettingDialog/connectionsettingdialog.ui \
+    FuelNameDialog/fuelnamedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

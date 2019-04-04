@@ -135,14 +135,18 @@ void FuelNameDialog::on_pushButtonRemove_clicked()
         QCheckBox *checkBox = qobject_cast<QCheckBox*>(item->layout()->itemAt(0)->widget());
         if(checkBox->isChecked()){
             for(int j = 0; j<ui->tableWidgetSource->rowCount();++j){
-                ui->tableWidgetSource->cellWidget(i,0)->setDisabled(false);
-                ui->tableWidgetSource->item(i,1)->setBackgroundColor("#FFFFFF");
-                ui->tableWidgetSource->item(i,2)->setBackgroundColor("#FFFFFF");
+                if(ui->tableWidgetTarget->item(i,1)->text() == ui->tableWidgetSource->item(j,1)->text()){
 
-                QWidget *item = ui->tableWidgetSource->cellWidget(i,0);
-                QCheckBox *checkBox = qobject_cast<QCheckBox*>(item->layout()->itemAt(0)->widget());
-                checkBox->setChecked(false);
-                rowDeleted.append(ui->tableWidgetTarget->item(i,1)->text());
+                    ui->tableWidgetSource->cellWidget(j,0)->setDisabled(false);
+                    ui->tableWidgetSource->item(j,1)->setBackgroundColor("#FFFFFF");
+                    ui->tableWidgetSource->item(j,2)->setBackgroundColor("#FFFFFF");
+
+                    QWidget *item = ui->tableWidgetSource->cellWidget(j,0);
+                    QCheckBox *checkBoxSource = qobject_cast<QCheckBox*>(item->layout()->itemAt(0)->widget());
+                    checkBoxSource->setChecked(false);
+                    rowDeleted.append(ui->tableWidgetTarget->item(i,1)->text());
+                    break;
+                }
             }
 
         }
@@ -154,6 +158,4 @@ void FuelNameDialog::on_pushButtonRemove_clicked()
             }
         }
     }
-
-
 }

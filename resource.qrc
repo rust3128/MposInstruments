@@ -3,5 +3,6 @@
         <file>Icons/fuel.png</file>
         <file>Icons/fuel_big.png</file>
         <file>Icons/SelectAl.png</file>
+        <file>Icons/unselectAll.png</file>
     </qresource>
 </RCC>

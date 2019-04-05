@@ -20,18 +20,21 @@ public:
 private slots:
     void on_pushButtonAdd_clicked();
     void on_toolButtonSelectAll_clicked();
-
     void on_toolButtonSelectAllTargets_clicked();
-
     void on_pushButtonRemove_clicked();
+    void on_comboBoxRegions_activated(int index);
+    void on_toolButtonRegions_clicked();
 
 private:
     Ui::FuelNameDialog *ui;
     QSqlQueryModel *modelTerminals;
+    QSqlQueryModel *modelRerions;
+    int regionID;
 
 private:
     void createUI();
     void setupModels();
+    void showSetFuelFrame();
 };
 
 #endif // FUELNAMEDIALOG_H

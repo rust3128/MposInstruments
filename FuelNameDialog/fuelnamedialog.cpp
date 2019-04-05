@@ -24,6 +24,7 @@ FuelNameDialog::~FuelNameDialog()
 void FuelNameDialog::setupModels()
 {
     modelTerminals = new QSqlQueryModel();
+    modelRerions = new QSqlQueryModel();
     QSqlDatabase db = QSqlDatabase::database("central");
 
     modelTerminals->setQuery("SELECT DISTINCT t.TERMINAL_ID, t.NAME, t.OWNER_ID FROM TERMINALS t "
@@ -31,10 +32,17 @@ void FuelNameDialog::setupModels()
                              "WHERE t.TERMINALTYPE = 3 "
                              "ORDER BY t.TERMINAL_ID",db);
     if (modelTerminals->lastError().isValid()) {
-        qCritical(logCritical()) <<Q_FUNC_INFO << "Ошибка создания модели." <<  modelTerminals->lastError().text();
+        qCritical(logCritical()) <<Q_FUNC_INFO << "Ошибка создания модели терминалов." <<  modelTerminals->lastError().text();
+    }
+    modelRerions->setQuery("select t.TERMINAL_ID, TRIM(t.NAME) FROM TERMINALS t "
+                           "where t.TERMINALTYPE=2 "
+                           "order by t.TERMINAL_ID",db);
+    if (modelRerions->lastError().isValid()) {
+        qCritical(logCritical()) <<Q_FUNC_INFO << "Ошибка создания модели регионов." <<  modelRerions->lastError().text();
     }
 
 }
+
 
 void FuelNameDialog::createUI()
 {
@@ -59,6 +67,15 @@ void FuelNameDialog::createUI()
     }
     ui->tableWidgetSource->hideColumn(3);
     ui->tableWidgetSource->resizeColumnsToContents();
+    ui->tableWidgetSource->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetSource->verticalHeader()->setDefaultSectionSize(ui->tableWidgetSource->verticalHeader()->minimumSectionSize());
+
+    ui->comboBoxRegions->setModel(modelRerions);
+    ui->comboBoxRegions->setModelColumn(1);
+    ui->comboBoxRegions->setCurrentIndex(-1);
+    ui->toolButtonRegions->hide();
+
+    ui->frameSetFuel->hide();
 }
 
 void FuelNameDialog::on_pushButtonAdd_clicked()
@@ -106,6 +123,9 @@ void FuelNameDialog::on_pushButtonAdd_clicked()
     }
     ui->tableWidgetTarget->resizeColumnsToContents();
     ui->tableWidgetTarget->sortItems(1,Qt::AscendingOrder);
+    ui->tableWidgetTarget->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetTarget->verticalHeader()->setDefaultSectionSize(ui->tableWidgetTarget->verticalHeader()->minimumSectionSize());
+    showSetFuelFrame();
 }
 
 
@@ -157,5 +177,41 @@ void FuelNameDialog::on_pushButtonRemove_clicked()
                 ui->tableWidgetTarget->removeRow(j);
             }
         }
+    }
+    showSetFuelFrame();
+}
+
+void FuelNameDialog::on_comboBoxRegions_activated(int idx)
+{
+    ui->toolButtonRegions->show();
+    regionID = modelRerions->data(modelRerions->index(idx,0)).toInt();
+}
+
+void FuelNameDialog::on_toolButtonRegions_clicked()
+{
+    for(int i=0;i<ui->tableWidgetSource->rowCount();++i){
+        QWidget *item = ui->tableWidgetSource->cellWidget(i,0);
+        QCheckBox *checkBox = qobject_cast<QCheckBox*>(item->layout()->itemAt(0)->widget());
+        if(ui->tableWidgetSource->item(i,3)->text().toInt() == regionID){
+            checkBox->setChecked(true);
+        }
+
+    }
+    ui->tableWidgetSource->sortItems(0,Qt::AscendingOrder);
+    ui->toolButtonRegions->hide();
+
+}
+
+
+void FuelNameDialog::showSetFuelFrame()
+{
+    if(ui->tableWidgetTarget->rowCount()>0){
+        ui->frameSetFuel->show();
+        QString messString = QString("Выбрано %1 АЗС из %2")
+                .arg(ui->tableWidgetTarget->rowCount())
+                .arg(ui->tableWidgetSource->rowCount());
+        ui->labelSelectedInfo->setText(messString);
+    } else {
+        ui->frameSetFuel->hide();
     }
 }

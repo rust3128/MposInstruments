@@ -1,0 +1,12 @@
+#ifndef PAGELIST_DEF_H
+#define PAGELIST_DEF_H
+
+enum {
+    INTRO_PAGE,
+    SELECT_AZS_PAGE,
+    SHOW_FUELNAME_PAGE,
+    CHANGE_FUELNAME_PAGE,
+    FINAL_PAGE
+};
+
+#endif // PAGELIST_DEF_H

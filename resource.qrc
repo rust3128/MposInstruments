@@ -4,5 +4,9 @@
         <file>Icons/fuel_big.png</file>
         <file>Icons/SelectAl.png</file>
         <file>Icons/unselectAll.png</file>
+        <file>Icons/fuellogo.png</file>
+        <file>Icons/banner.png</file>
+        <file>Icons/checked.png</file>
+        <file>Icons/unchecked.png</file>
     </qresource>
 </RCC>

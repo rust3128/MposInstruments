@@ -31,6 +31,7 @@ private:
     QSqlQueryModel *modelRerions;
     int regionID;
 
+
 private:
     void createUI();
     void setupModels();

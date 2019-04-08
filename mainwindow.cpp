@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "LoggingCategories/loggingcategories.h"
-#include "FuelNameDialog/fuelnamedialog.h"
+#include "FuelNameWizard/fuelnamewizard.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionFuelName_triggered()
 {
-    FuelNameDialog *fnDlg = new FuelNameDialog();
+    FuelNameWizard *fnDlg = new FuelNameWizard();
     this->setCentralWidget(fnDlg);
     fnDlg->exec();
 

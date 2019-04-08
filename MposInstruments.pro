@@ -29,19 +29,26 @@ SOURCES += \
     LoggingCategories/loggingcategories.cpp \
     DataBases/databases.cpp \
     ConnectionSettingDialog/connectionsettingdialog.cpp \
-    FuelNameDialog/fuelnamedialog.cpp
+    FuelNameDialog/fuelnamedialog.cpp \
+    FuelNameWizard/fuelnamewizard.cpp \
+    FuelNameWizard/intropage.cpp
 
 HEADERS += \
         mainwindow.h \
     LoggingCategories/loggingcategories.h \
     DataBases/databases.h \
     ConnectionSettingDialog/connectionsettingdialog.h \
-    FuelNameDialog/fuelnamedialog.h
+    FuelNameDialog/fuelnamedialog.h \
+    FuelNameWizard/fuelnamewizard.h \
+    FuelNameWizard/pagelist_def.h \
+    FuelNameWizard/intropage.h
 
 FORMS += \
         mainwindow.ui \
     ConnectionSettingDialog/connectionsettingdialog.ui \
-    FuelNameDialog/fuelnamedialog.ui
+    FuelNameDialog/fuelnamedialog.ui \
+    FuelNameWizard/fuelnamewizard.ui \
+    FuelNameWizard/intropage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

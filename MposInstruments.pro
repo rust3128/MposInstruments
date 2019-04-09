@@ -31,7 +31,11 @@ SOURCES += \
     ConnectionSettingDialog/connectionsettingdialog.cpp \
     FuelNameDialog/fuelnamedialog.cpp \
     FuelNameWizard/fuelnamewizard.cpp \
-    FuelNameWizard/intropage.cpp
+    FuelNameWizard/intropage.cpp \
+    FuelNameWizard/terminalspage.cpp \
+    FuelNameWizard/finalpage.cpp \
+    FuelNameWizard/terminals.cpp \
+    FuelNameWizard/modelterminals.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,14 +45,21 @@ HEADERS += \
     FuelNameDialog/fuelnamedialog.h \
     FuelNameWizard/fuelnamewizard.h \
     FuelNameWizard/pagelist_def.h \
-    FuelNameWizard/intropage.h
+    FuelNameWizard/intropage.h \
+    FuelNameWizard/terminalspage.h \
+    FuelNameWizard/finalpage.h \
+    FuelNameWizard/terminals.h \
+    FuelNameWizard/modelterminals.h \
+    passconv.h
 
 FORMS += \
         mainwindow.ui \
     ConnectionSettingDialog/connectionsettingdialog.ui \
     FuelNameDialog/fuelnamedialog.ui \
     FuelNameWizard/fuelnamewizard.ui \
-    FuelNameWizard/intropage.ui
+    FuelNameWizard/intropage.ui \
+    FuelNameWizard/terminalspage.ui \
+    FuelNameWizard/finalpage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

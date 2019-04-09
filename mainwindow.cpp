@@ -20,8 +20,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionFuelName_triggered()
 {
+    ui->actionFuelName->setEnabled(false);
     FuelNameWizard *fnDlg = new FuelNameWizard();
     this->setCentralWidget(fnDlg);
     fnDlg->exec();
+    ui->actionFuelName->setEnabled(true);
+
 
 }

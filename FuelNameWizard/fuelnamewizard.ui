@@ -17,7 +17,13 @@
    <enum>QWizard::ModernStyle</enum>
   </property>
   <property name="options">
-   <set>QWizard::NoBackButtonOnStartPage</set>
+   <set>QWizard::CancelButtonOnLeft|QWizard::NoBackButtonOnStartPage</set>
+  </property>
+  <property name="titleFormat">
+   <enum>Qt::RichText</enum>
+  </property>
+  <property name="subTitleFormat">
+   <enum>Qt::RichText</enum>
   </property>
  </widget>
  <resources/>

@@ -4,6 +4,8 @@
 #include <QWizard>
 
 #include "FuelNameWizard/intropage.h"
+#include "FuelNameWizard/terminalspage.h"
+#include "FuelNameWizard/finalpage.h"
 
 namespace Ui {
 class FuelNameWizard;
@@ -17,9 +19,13 @@ public:
     explicit FuelNameWizard(QWidget *parent = nullptr);
     ~FuelNameWizard();
 
+private slots:
+    void slotCancelWizard();
 private:
     Ui::FuelNameWizard *ui;
     IntroPage *introPage;
+    TerminalsPage *termsPage;
+    FinalPage *finalPage;
 private:
     void createUI();
 };

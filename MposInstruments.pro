@@ -29,33 +29,26 @@ SOURCES += \
     LoggingCategories/loggingcategories.cpp \
     DataBases/databases.cpp \
     ConnectionSettingDialog/connectionsettingdialog.cpp \
-    FuelNameDialog/fuelnamedialog.cpp \
     FuelNameWizard/fuelnamewizard.cpp \
     FuelNameWizard/intropage.cpp \
     FuelNameWizard/terminalspage.cpp \
-    FuelNameWizard/finalpage.cpp \
-    FuelNameWizard/terminals.cpp \
-    FuelNameWizard/modelterminals.cpp
+    FuelNameWizard/finalpage.cpp
 
 HEADERS += \
         mainwindow.h \
     LoggingCategories/loggingcategories.h \
     DataBases/databases.h \
     ConnectionSettingDialog/connectionsettingdialog.h \
-    FuelNameDialog/fuelnamedialog.h \
     FuelNameWizard/fuelnamewizard.h \
     FuelNameWizard/pagelist_def.h \
     FuelNameWizard/intropage.h \
     FuelNameWizard/terminalspage.h \
     FuelNameWizard/finalpage.h \
-    FuelNameWizard/terminals.h \
-    FuelNameWizard/modelterminals.h \
     passconv.h
 
 FORMS += \
         mainwindow.ui \
     ConnectionSettingDialog/connectionsettingdialog.ui \
-    FuelNameDialog/fuelnamedialog.ui \
     FuelNameWizard/fuelnamewizard.ui \
     FuelNameWizard/intropage.ui \
     FuelNameWizard/terminalspage.ui \

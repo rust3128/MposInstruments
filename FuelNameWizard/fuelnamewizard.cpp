@@ -13,10 +13,11 @@ FuelNameWizard::FuelNameWizard(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    createUI();
+
     disconnect( button( QWizard::CancelButton ), &QAbstractButton::clicked, this, &QDialog::reject );
     connect(button(QWizard::CancelButton),&QAbstractButton::clicked, this, &FuelNameWizard::slotCancelWizard);
-
-    createUI();
+    connect(termsPage,&TerminalsPage::signalSendListTerm, showPage, &ShowPage::slotGetListTerminals);
 
 }
 
@@ -41,11 +42,13 @@ void FuelNameWizard::createUI()
 
     introPage = new IntroPage();
     termsPage = new TerminalsPage();
+    showPage = new ShowPage();
     finalPage = new FinalPage();
 
     this->setPage(INTRO_PAGE, introPage);
     this->setPage(SELECT_AZS_PAGE,termsPage);
     this->setPage(FINAL_PAGE,finalPage);
+    this->setPage(SHOW_FUELNAME_PAGE, showPage);
 
     this->setStartId(INTRO_PAGE);
 }

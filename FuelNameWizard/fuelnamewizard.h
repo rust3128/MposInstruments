@@ -6,6 +6,7 @@
 #include "FuelNameWizard/intropage.h"
 #include "FuelNameWizard/terminalspage.h"
 #include "FuelNameWizard/finalpage.h"
+#include "FuelNameWizard/showpage.h"
 
 namespace Ui {
 class FuelNameWizard;
@@ -25,6 +26,7 @@ private:
     Ui::FuelNameWizard *ui;
     IntroPage *introPage;
     TerminalsPage *termsPage;
+    ShowPage *showPage;
     FinalPage *finalPage;
 private:
     void createUI();

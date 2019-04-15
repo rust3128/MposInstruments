@@ -5,6 +5,7 @@
 
 #include <QWizardPage>
 #include <QSqlQueryModel>
+#include <QList>
 
 namespace Ui {
 class TerminalsPage;
@@ -18,21 +19,26 @@ public:
     explicit TerminalsPage(QWidget *parent = nullptr);
     ~TerminalsPage();
 
+signals:
+    void signalSendListTerm(QList<int> lsTerm);
 private:
     Ui::TerminalsPage *ui;
     QSqlQueryModel *modelTerminals;
     QSqlQueryModel *modelRegions;
+    int regionID;
+    QList<int> listTerminals;
 private:
     void createUI();
     void setupModels();
     void showSelectedTerm();
+    void updateTerminalList();
+
 
 
     // QWizardPage interface
 public:
     void initializePage();
-    bool isComplete() const;
-    int regionID;
+
 private slots:
 
     void on_pushButtonAdd_clicked();
@@ -43,6 +49,14 @@ private slots:
     void on_toolButtonRegions_clicked();
     void on_toolButtonUnSelectAllSource_clicked();
     void on_toolButtonUnSelectAllTargets_clicked();
+
+    // QWizardPage interface
+public:
+    int nextId() const;
+
+   // QWizardPage interface
+public:
+    bool isComplete() const;
 };
 
 #endif // TERMINALSPAGE_H

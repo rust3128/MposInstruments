@@ -1,6 +1,7 @@
 #include "terminalspage.h"
 #include "ui_terminalspage.h"
 #include "LoggingCategories/loggingcategories.h"
+#include "FuelNameWizard/pagelist_def.h"
 
 #include <QSqlQuery>
 #include <QSqlError>
@@ -13,6 +14,8 @@ TerminalsPage::TerminalsPage(QWidget *parent) :
 {
     ui->setupUi(this);
     setupModels();
+//    this->setCommitPage(true);
+
 
 }
 
@@ -57,6 +60,7 @@ void TerminalsPage::createUI()
     ui->comboBoxRegions->setModelColumn(1);
     ui->comboBoxRegions->setCurrentIndex(-1);
     ui->toolButtonRegions->hide();
+    listTerminals.clear();
     showSelectedTerm();
 }
 
@@ -89,12 +93,6 @@ void TerminalsPage::initializePage()
 }
 
 
-bool TerminalsPage::isComplete() const
-{
-    if(ui->tableWidgetTarget->rowCount()>0)
-        return true;
-    return false;
-}
 
 
 void TerminalsPage::on_pushButtonAdd_clicked()
@@ -224,6 +222,11 @@ void TerminalsPage::on_toolButtonRegions_clicked()
 void TerminalsPage::showSelectedTerm()
 {
     ui->labelTargetTerminals->setText(QString("Выбрано для обработки %1 АЗС.").arg(ui->tableWidgetTarget->rowCount()));
+    listTerminals.clear();
+    for(int i=0; i<ui->tableWidgetTarget->rowCount(); ++i){
+        listTerminals.append(ui->tableWidgetTarget->item(i,1)->text().toInt());
+    }
+    emit signalSendListTerm(listTerminals);
 }
 
 void TerminalsPage::on_toolButtonUnSelectAllSource_clicked()
@@ -243,4 +246,25 @@ void TerminalsPage::on_toolButtonUnSelectAllTargets_clicked()
         QCheckBox *checkBox = qobject_cast<QCheckBox*>(item->layout()->itemAt(0)->widget());
         checkBox->setChecked(false);
     }
+}
+
+
+int TerminalsPage::nextId() const
+{
+    int nextPage=0;
+    if(field("checkView").toBool())
+        nextPage = SHOW_FUELNAME_PAGE;
+    if(field("checkChange").toBool())
+        nextPage = FINAL_PAGE;
+    return nextPage;
+}
+
+
+
+bool TerminalsPage::isComplete() const
+{
+    if(listTerminals.size()>0){
+        return true;
+    }
+    return false;
 }

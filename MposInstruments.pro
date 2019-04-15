@@ -32,7 +32,8 @@ SOURCES += \
     FuelNameWizard/fuelnamewizard.cpp \
     FuelNameWizard/intropage.cpp \
     FuelNameWizard/terminalspage.cpp \
-    FuelNameWizard/finalpage.cpp
+    FuelNameWizard/finalpage.cpp \
+    FuelNameWizard/showpage.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     FuelNameWizard/intropage.h \
     FuelNameWizard/terminalspage.h \
     FuelNameWizard/finalpage.h \
-    passconv.h
+    passconv.h \
+    FuelNameWizard/showpage.h
 
 FORMS += \
         mainwindow.ui \
@@ -52,7 +54,8 @@ FORMS += \
     FuelNameWizard/fuelnamewizard.ui \
     FuelNameWizard/intropage.ui \
     FuelNameWizard/terminalspage.ui \
-    FuelNameWizard/finalpage.ui
+    FuelNameWizard/finalpage.ui \
+    FuelNameWizard/showpage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

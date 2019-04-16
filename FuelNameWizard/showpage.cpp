@@ -1,6 +1,8 @@
 #include "showpage.h"
 #include "ui_showpage.h"
 #include "LoggingCategories/loggingcategories.h"
+#include <QThread>
+#include <QDateTime>
 
 
 static const QStringList TABLE_COLUMN_LABELS = QStringList() << "АЗС" << "IP" << "Статус" << "Результат";
@@ -26,7 +28,9 @@ ShowPage::~ShowPage()
     delete ui;
 }
 
-void ShowPage::slotGetListTerminals(QList<int> lsTerm)
+
+
+void ShowPage::slotGetListTerminals(QStringList lsTerm)
 {
     m_listTerminals = lsTerm;
 }
@@ -51,22 +55,72 @@ void ShowPage::initializePage()
 void ShowPage::createView()
 {
     modelConnections = new QSqlQueryModel();
-    QSqlDatabase db = QSqlDatabase::database();
-    QString inStr;
-    QListIterator<int> i(m_listTerminals);
-    while (i.hasNext())
-        inStr+=QString::number(i.next())+",";
+//    QSqlDatabase db = QSqlDatabase::database();
+    QString inStr = m_listTerminals.join(",");
+
+
     QString strSQL = QString("SELECT c.TERMINAL_ID, c.SERVER_NAME, c.DB_NAME, c.CON_PASSWORD from CONNECTIONS c "
                              "WHERE c.TERMINAL_ID IN (%1) and c.CONNECT_ID = 2 "
                              "ORDER BY c.TERMINAL_ID")
             .arg(inStr);
     qInfo(logInfo()) << "SQL" << strSQL;
+    modelConnections->setQuery(strSQL);
+
+    qInfo(logInfo()) << "Model Row Count" << modelConnections->rowCount();
 
     ui->tableWidget->setColumnCount(COLUMN_COUNT);
     ui->tableWidget->setHorizontalHeaderLabels(TABLE_COLUMN_LABELS);
     ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->tableWidget->setItemDelegateForColumn(1, new ProgressBarDelegate);
+    ui->tableWidget->verticalHeader()->hide();
 
+    for(int i = 0; i<modelConnections->rowCount();++i){
+        ui->tableWidget->insertRow(i);
+        ui->tableWidget->setItem(i,0,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,0,QModelIndex())).toString()));
+        ui->tableWidget->setItem(i,1,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString()));
+    }
+
+    ui->tableWidget->resizeColumnsToContents();
+
+//    ui->tableWidget->setItemDelegateForColumn(1, new ProgressBarDelegate);
+    CheckAzsStatus *checkStatus = new CheckAzsStatus(modelConnections->data(modelConnections->index(0,0,QModelIndex())).toInt(),
+                                                     modelConnections->data(modelConnections->index(0,1,QModelIndex())).toString());
+    QThread *thread = new QThread(this);
+
+    checkStatus->moveToThread(thread);
+
+    connect(thread,&QThread::started, checkStatus, &CheckAzsStatus::slotCheckAzsStatus,Qt::DirectConnection);
+    connect(thread,&QThread::started, this, &ShowPage::slotStartExecute,Qt::DirectConnection);
+
+    connect(checkStatus,&CheckAzsStatus::signalSendResult,this,&ShowPage::slotGetAzsStatus);
+
+    connect(checkStatus,&CheckAzsStatus::finished,this,&ShowPage::slotStopExecute);
+    connect(checkStatus,&CheckAzsStatus::finished,thread,&QThread::quit);
+    connect(checkStatus,&CheckAzsStatus::finished,checkStatus,&CheckAzsStatus::deleteLater);
+    connect(thread,&QThread::finished, thread, &QThread::deleteLater);
+
+    thread->start();
+
+
+}
+
+
+void ShowPage::slotStartExecute()
+{
+    qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread started";
+}
+
+void ShowPage::slotStopExecute()
+{
+    qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread stoped";
+}
+
+void ShowPage::slotGetAzsStatus(bool res)
+{
+    if(res){
+        ui->tableWidget->item(0,2)->setText("ON LINE");
+    } else {
+        ui->tableWidget->item(0,2)->setText("OFF LINE");
+    }
 
 }
 
@@ -87,7 +141,7 @@ void ProgressBarDelegate::paint(
     progressBarOption.rect = r;
     progressBarOption.textAlignment = Qt::AlignCenter;
     progressBarOption.minimum = 0;
-    progressBarOption.maximum = MAX_PROGRESS_VALUE;
+    progressBarOption.maximum = 0;
     progressBarOption.progress = progress;
     progressBarOption.text = QString::number( progress ) + "%";
     progressBarOption.textVisible = true;

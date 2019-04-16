@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MposInstruments
@@ -33,7 +33,8 @@ SOURCES += \
     FuelNameWizard/intropage.cpp \
     FuelNameWizard/terminalspage.cpp \
     FuelNameWizard/finalpage.cpp \
-    FuelNameWizard/showpage.cpp
+    FuelNameWizard/showpage.cpp \
+    FuelNameWizard/checkazsstatus.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     FuelNameWizard/terminalspage.h \
     FuelNameWizard/finalpage.h \
     passconv.h \
-    FuelNameWizard/showpage.h
+    FuelNameWizard/showpage.h \
+    FuelNameWizard/checkazsstatus.h
 
 FORMS += \
         mainwindow.ui \

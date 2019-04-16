@@ -224,7 +224,7 @@ void TerminalsPage::showSelectedTerm()
     ui->labelTargetTerminals->setText(QString("Выбрано для обработки %1 АЗС.").arg(ui->tableWidgetTarget->rowCount()));
     listTerminals.clear();
     for(int i=0; i<ui->tableWidgetTarget->rowCount(); ++i){
-        listTerminals.append(ui->tableWidgetTarget->item(i,1)->text().toInt());
+        listTerminals.append(ui->tableWidgetTarget->item(i,1)->text());
     }
     emit signalSendListTerm(listTerminals);
 }

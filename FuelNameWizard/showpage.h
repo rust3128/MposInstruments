@@ -1,6 +1,8 @@
 #ifndef SHOWPAGE_H
 #define SHOWPAGE_H
 
+#include "FuelNameWizard/checkazsstatus.h"
+
 #include <QWizardPage>
 #include <QStyledItemDelegate>
 
@@ -18,13 +20,17 @@ class ShowPage : public QWizardPage
 public:
     explicit ShowPage(QWidget *parent = nullptr);
     ~ShowPage();
-
+private slots:
+    void slotStartExecute();
+    void slotStopExecute();
+    void slotGetAzsStatus(bool res);
 public slots:
-    void slotGetListTerminals(QList<int> lsTerm);
+    void slotGetListTerminals(QStringList lsTerm);
 private:
     Ui::ShowPage *ui;
-    QList<int> m_listTerminals;
+    QStringList m_listTerminals;
     QSqlQueryModel *modelConnections;
+    CheckAzsStatus *chkAzs;
 private:
     void createUI();
     void createView();

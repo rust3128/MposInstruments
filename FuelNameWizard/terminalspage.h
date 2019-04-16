@@ -20,13 +20,13 @@ public:
     ~TerminalsPage();
 
 signals:
-    void signalSendListTerm(QList<int> lsTerm);
+    void signalSendListTerm(QStringList lsTerm);
 private:
     Ui::TerminalsPage *ui;
     QSqlQueryModel *modelTerminals;
     QSqlQueryModel *modelRegions;
     int regionID;
-    QList<int> listTerminals;
+    QStringList listTerminals;
 private:
     void createUI();
     void setupModels();

@@ -3,6 +3,8 @@
 #include "LoggingCategories/loggingcategories.h"
 #include <QThread>
 #include <QDateTime>
+#include <QProgressBar>
+#include <QIcon>
 
 
 static const QStringList TABLE_COLUMN_LABELS = QStringList() << "АЗС" << "IP" << "Статус" << "Результат";
@@ -47,26 +49,26 @@ void ShowPage::createUI()
 
 void ShowPage::initializePage()
 {
-    qInfo(logInfo()) << "List" << m_listTerminals;
     createView();
-
 }
 
 void ShowPage::createView()
 {
     modelConnections = new QSqlQueryModel();
-//    QSqlDatabase db = QSqlDatabase::database();
     QString inStr = m_listTerminals.join(",");
+
 
 
     QString strSQL = QString("SELECT c.TERMINAL_ID, c.SERVER_NAME, c.DB_NAME, c.CON_PASSWORD from CONNECTIONS c "
                              "WHERE c.TERMINAL_ID IN (%1) and c.CONNECT_ID = 2 "
                              "ORDER BY c.TERMINAL_ID")
             .arg(inStr);
-    qInfo(logInfo()) << "SQL" << strSQL;
     modelConnections->setQuery(strSQL);
 
-    qInfo(logInfo()) << "Model Row Count" << modelConnections->rowCount();
+
+    ui->tableWidget->clearContents();
+    ui->tableWidget->clear();
+    ui->tableWidget->setRowCount(0);
 
     ui->tableWidget->setColumnCount(COLUMN_COUNT);
     ui->tableWidget->setHorizontalHeaderLabels(TABLE_COLUMN_LABELS);
@@ -77,28 +79,39 @@ void ShowPage::createView()
         ui->tableWidget->insertRow(i);
         ui->tableWidget->setItem(i,0,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,0,QModelIndex())).toString()));
         ui->tableWidget->setItem(i,1,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString()));
+//        QProgressBar * progress = new QProgressBar();
+//        progress->setMinimum(0);
+//        progress->setMaximum(0);
+
+        ui->tableWidget->setItem(i,2, new QTableWidgetItem("Выполняется...."));
+//        ui->tableWidget->setCellWidget(i,3,progress);
+
     }
 
     ui->tableWidget->resizeColumnsToContents();
+//    ui->tableWidget->verticalHeader()->setDefaultSectionSize(ui->tableWidget->verticalHeader()->minimumSectionSize());
 
-//    ui->tableWidget->setItemDelegateForColumn(1, new ProgressBarDelegate);
-    CheckAzsStatus *checkStatus = new CheckAzsStatus(modelConnections->data(modelConnections->index(0,0,QModelIndex())).toInt(),
-                                                     modelConnections->data(modelConnections->index(0,1,QModelIndex())).toString());
-    QThread *thread = new QThread(this);
+//    ui->tableWidget->setItemDelegateForColumn(3, new ProgressBarDelegate);
 
-    checkStatus->moveToThread(thread);
+    for(int i = 0; i < modelConnections->rowCount(); ++i){
+        CheckAzsStatus *checkStatus = new CheckAzsStatus(i, modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString());
+        QThread *thread = new QThread(this);
 
-    connect(thread,&QThread::started, checkStatus, &CheckAzsStatus::slotCheckAzsStatus,Qt::DirectConnection);
-    connect(thread,&QThread::started, this, &ShowPage::slotStartExecute,Qt::DirectConnection);
+        checkStatus->moveToThread(thread);
 
-    connect(checkStatus,&CheckAzsStatus::signalSendResult,this,&ShowPage::slotGetAzsStatus);
+        connect(thread,&QThread::started, this, &ShowPage::slotStartExecute,Qt::DirectConnection);
+        connect(thread,&QThread::started, checkStatus, &CheckAzsStatus::slotCheckAzsStatus,Qt::DirectConnection);
 
-    connect(checkStatus,&CheckAzsStatus::finished,this,&ShowPage::slotStopExecute);
-    connect(checkStatus,&CheckAzsStatus::finished,thread,&QThread::quit);
-    connect(checkStatus,&CheckAzsStatus::finished,checkStatus,&CheckAzsStatus::deleteLater);
-    connect(thread,&QThread::finished, thread, &QThread::deleteLater);
+        connect(checkStatus,&CheckAzsStatus::signalSendResult,this,&ShowPage::slotGetAzsStatus);
 
-    thread->start();
+        connect(checkStatus,&CheckAzsStatus::finished,this,&ShowPage::slotStopExecute);
+        connect(checkStatus,&CheckAzsStatus::finished,thread,&QThread::quit);
+        connect(checkStatus,&CheckAzsStatus::finished,checkStatus,&CheckAzsStatus::deleteLater);
+        connect(thread,&QThread::finished, thread, &QThread::deleteLater);
+
+        thread->start();
+
+    }
 
 
 }
@@ -109,19 +122,22 @@ void ShowPage::slotStartExecute()
     qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread started";
 }
 
-void ShowPage::slotStopExecute()
+void ShowPage::slotStopExecute(int term)
 {
-    qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread stoped";
+    qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread stoped Termonal" << term;
+
+    if(isOnline) {
+        ui->tableWidget->item(term, 2)->setText("ON LINE");
+        ui->tableWidget->item(term, 2)->setIcon(QIcon(":/Icons/SelectAl.png"));
+    } else {
+        ui->tableWidget->item(term, 2)->setText("OFF LINE");
+        ui->tableWidget->item(term, 2)->setIcon(QIcon(":/Icons/unselectAll.png"));
+    }
 }
 
 void ShowPage::slotGetAzsStatus(bool res)
 {
-    if(res){
-        ui->tableWidget->item(0,2)->setText("ON LINE");
-    } else {
-        ui->tableWidget->item(0,2)->setText("OFF LINE");
-    }
-
+    isOnline = res;
 }
 
 ProgressBarDelegate::ProgressBarDelegate( QObject* parent ) : QStyledItemDelegate( parent ) {
@@ -141,9 +157,9 @@ void ProgressBarDelegate::paint(
     progressBarOption.rect = r;
     progressBarOption.textAlignment = Qt::AlignCenter;
     progressBarOption.minimum = 0;
-    progressBarOption.maximum = 0;
+    progressBarOption.maximum = 100;
     progressBarOption.progress = progress;
-    progressBarOption.text = QString::number( progress ) + "%";
+    progressBarOption.text = "Проверка...";
     progressBarOption.textVisible = true;
 
     QStyledItemDelegate::paint( painter, option, QModelIndex() );

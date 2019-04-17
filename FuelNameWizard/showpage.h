@@ -22,7 +22,7 @@ public:
     ~ShowPage();
 private slots:
     void slotStartExecute();
-    void slotStopExecute();
+    void slotStopExecute(int term);
     void slotGetAzsStatus(bool res);
 public slots:
     void slotGetListTerminals(QStringList lsTerm);
@@ -31,6 +31,8 @@ private:
     QStringList m_listTerminals;
     QSqlQueryModel *modelConnections;
     CheckAzsStatus *chkAzs;
+    bool isOnline;
+
 private:
     void createUI();
     void createView();

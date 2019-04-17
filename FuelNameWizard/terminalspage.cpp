@@ -72,7 +72,7 @@ void TerminalsPage::setupModels()
 
     modelTerminals->setQuery("SELECT DISTINCT t.terminal_id, TRIM(t.name), t.OWNER_ID FROM TERMINALS t "
                              "LEFT JOIN SHIFTS s ON s.TERMINAL_ID = t.TERMINAL_ID "
-                             "WHERE t.TERMINALTYPE=3 and s.SHIFT_ID>0");
+                             "WHERE t.TERMINALTYPE=3 and t.ISACTIVE='T' and s.SHIFT_ID>0");
     if (modelTerminals->lastError().isValid()) {
         qCritical(logCritical()) <<Q_FUNC_INFO << "Ошибка создания модели терминалов." <<  modelTerminals->lastError().text();
     }

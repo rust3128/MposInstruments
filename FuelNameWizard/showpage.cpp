@@ -41,11 +41,7 @@ void ShowPage::createUI()
 {
     this->setTitle("<html><head/><body><p><span style='font-size:18pt; font-weight:600;color:blue'>Наименования топлива на АЗС.</span></p></body></html>");
     this->setSubTitle("<html><head/><body><p><span style='font-size:10pt; font-weight:600;'>Наименования видов таоплива в базе данных АЗС с указанием резервуаров.</span></p></body></html>");
-
-
 }
-
-
 
 void ShowPage::initializePage()
 {

@@ -6,7 +6,7 @@ CheckAzsStatus::CheckAzsStatus(int term, QString ip, QObject *parent) : QObject(
 {
     m_serverName = ip;
     m_terminalID = term;
-    qInfo(logInfo()) << "IP" << m_serverName << "Terminal" << m_terminalID;
+
 }
 
 void CheckAzsStatus::slotCheckAzsStatus()

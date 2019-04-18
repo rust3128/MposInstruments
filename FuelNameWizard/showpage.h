@@ -8,6 +8,8 @@
 
 #include <QSqlQueryModel>
 #include <QSqlError>
+#include <QtConcurrent>
+#include <QTcpSocket>
 
 namespace Ui {
 class ShowPage;
@@ -20,10 +22,12 @@ class ShowPage : public QWizardPage
 public:
     explicit ShowPage(QWidget *parent = nullptr);
     ~ShowPage();
+    bool isOnline;
 private slots:
     void slotStartExecute();
     void slotStopExecute(int term);
     void slotGetAzsStatus(bool res);
+    void slotFinished();
 public slots:
     void slotGetListTerminals(QStringList lsTerm);
 private:
@@ -31,7 +35,9 @@ private:
     QStringList m_listTerminals;
     QSqlQueryModel *modelConnections;
     CheckAzsStatus *chkAzs;
-    bool isOnline;
+
+    QFutureWatcher<bool> *checkOnline;
+    QStringList m_listIP;
 
 private:
     void createUI();

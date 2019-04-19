@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QDateTime>
 #include <QProgressBar>
+#include <QProgressDialog>
 #include <QIcon>
 #include <functional>
 
@@ -42,11 +43,12 @@ void ShowPage::slotGetListTerminals(QStringList lsTerm)
 void ShowPage::createUI()
 {
     this->setTitle("<html><head/><body><p><span style='font-size:18pt; font-weight:600;color:blue'>Наименования топлива на АЗС.</span></p></body></html>");
-    this->setSubTitle("<html><head/><body><p><span style='font-size:10pt; font-weight:600;'>Наименования видов таоплива в базе данных АЗС с указанием резервуаров.</span></p></body></html>");
+    this->setSubTitle("<html><head/><body><p><span style='font-size:10pt; font-weight:600;'>Наименования видов топлива в базе данных АЗС с указанием резервуаров.</span></p></body></html>");
 }
 
 void ShowPage::initializePage()
 {
+
     createView();
 }
 
@@ -70,7 +72,7 @@ void ShowPage::createView()
     m_listIP.clear();
     ui->tableWidget->setColumnCount(COLUMN_COUNT);
     ui->tableWidget->setHorizontalHeaderLabels(TABLE_COLUMN_LABELS);
-//    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->tableWidget->verticalHeader()->hide();
 
     for(int i = 0; i<modelConnections->rowCount();++i){
@@ -78,9 +80,7 @@ void ShowPage::createView()
         ui->tableWidget->setItem(i,0,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,0,QModelIndex())).toString()));
         ui->tableWidget->setItem(i,1,new QTableWidgetItem(modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString()));
         m_listIP.append(modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString());
-//        QProgressBar * progress = new QProgressBar();
-//        progress->setMinimum(0);
-//        progress->setMaximum(0);
+
 
         ui->tableWidget->setItem(i,2, new QTableWidgetItem("Выполняется...."));
 //        ui->tableWidget->setCellWidget(i,3,progress);
@@ -90,9 +90,12 @@ void ShowPage::createView()
     ui->tableWidget->hideColumn(4);
 
     ui->tableWidget->resizeColumnsToContents();
+
+
+
 //    ui->tableWidget->verticalHeader()->setDefaultSectionSize(ui->tableWidget->verticalHeader()->minimumSectionSize());
 
-//    ui->tableWidget->setItemDelegateForColumn(3, new ProgressBarDelegate);
+    ui->tableWidget->setItemDelegateForColumn(3, new ProgressBarDelegate);
 //////// qThread
 //    for(int i = 0; i < modelConnections->rowCount(); ++i){
 //        CheckAzsStatus *checkStatus = new CheckAzsStatus(i, modelConnections->data(modelConnections->index(i,1,QModelIndex())).toString());
@@ -115,9 +118,12 @@ void ShowPage::createView()
 //    }
 //////////
     checkOnline = new QFutureWatcher<bool>(this);
-    connect(checkOnline,&QFutureWatcher<QTcpSocket>::started, this, &ShowPage::slotStartExecute);
-    connect(checkOnline,&QFutureWatcher<QTcpSocket>::resultReadyAt,this,&ShowPage::slotStopExecute);
-    connect(checkOnline,&QFutureWatcher<QTcpSocket>::finished,this,&ShowPage::slotFinished);
+    connect(checkOnline,&QFutureWatcher<bool>::started, this, &ShowPage::slotStartExecute);
+    connect(checkOnline,&QFutureWatcher<bool>::resultReadyAt,this,&ShowPage::slotStopExecute);
+    connect(checkOnline,  &QFutureWatcher<bool>::progressRangeChanged, ui->progressBarOnline, &QProgressBar::setRange);
+    connect(checkOnline, &QFutureWatcher<void>::progressValueChanged,  ui->progressBarOnline, &QProgressBar::setValue);
+
+    connect(checkOnline,&QFutureWatcher<bool>::finished,this,&ShowPage::slotFinished);
 
     std::function<bool(QString)> getOnline = [] (const QString ipAZS){
         QTcpSocket tcpSocket;
@@ -155,6 +161,9 @@ void ShowPage::slotGetAzsStatus(bool res)
 void ShowPage::slotFinished()
 {
     qInfo(logInfo()) << "QtConcurent finished";
+    ui->groupBox->hide();
+    ui->tableWidget->showColumn(3);
+    ui->tableWidget->showColumn(4);
 }
 
 ProgressBarDelegate::ProgressBarDelegate( QObject* parent ) : QStyledItemDelegate( parent ) {

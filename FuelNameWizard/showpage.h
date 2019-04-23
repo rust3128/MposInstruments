@@ -2,6 +2,7 @@
 #define SHOWPAGE_H
 
 #include "FuelNameWizard/checkazsstatus.h"
+#include "lisstfuelclass.h"
 
 #include <QWizardPage>
 #include <QStyledItemDelegate>
@@ -25,9 +26,12 @@ public:
     bool isOnline;
 private slots:
     void slotStartExecute();
-    void slotStopExecute(int term);
+    void slotStopExecute(int row);
     void slotGetAzsStatus(bool res);
     void slotFinished();
+
+    void slotGetFuellist(QVector<LisstFuelClass> lfVec);
+
 public slots:
     void slotGetListTerminals(QStringList lsTerm);
 private:
@@ -35,13 +39,14 @@ private:
     QStringList m_listTerminals;
     QSqlQueryModel *modelConnections;
     CheckAzsStatus *chkAzs;
-
+    int term;
     QFutureWatcher<bool> *checkOnline;
     QStringList m_listIP;
 
 private:
     void createUI();
     void createView();
+    void getFuelsList(int idx);
 
     // QWizardPage interface
 public:

@@ -24,6 +24,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    FuelNameWizard/azsfuellist.cpp \
+    lisstfuelclass.cpp \
         main.cpp \
         mainwindow.cpp \
     LoggingCategories/loggingcategories.cpp \
@@ -37,6 +39,8 @@ SOURCES += \
     FuelNameWizard/checkazsstatus.cpp
 
 HEADERS += \
+    FuelNameWizard/azsfuellist.h \
+    lisstfuelclass.h \
         mainwindow.h \
     LoggingCategories/loggingcategories.h \
     DataBases/databases.h \

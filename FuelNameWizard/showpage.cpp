@@ -1,11 +1,13 @@
 #include "showpage.h"
 #include "ui_showpage.h"
 #include "LoggingCategories/loggingcategories.h"
+#include "azsfuellist.h"
 #include <QThread>
 #include <QDateTime>
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QIcon>
+#include <QSqlRecord>
 #include <functional>
 
 
@@ -91,8 +93,6 @@ void ShowPage::createView()
 
     ui->tableWidget->resizeColumnsToContents();
 
-
-
 //    ui->tableWidget->verticalHeader()->setDefaultSectionSize(ui->tableWidget->verticalHeader()->minimumSectionSize());
 
     ui->tableWidget->setItemDelegateForColumn(3, new ProgressBarDelegate);
@@ -125,6 +125,8 @@ void ShowPage::createView()
 
     connect(checkOnline,&QFutureWatcher<bool>::finished,this,&ShowPage::slotFinished);
 
+
+
     std::function<bool(QString)> getOnline = [] (const QString ipAZS){
         QTcpSocket tcpSocket;
         tcpSocket.connectToHost(ipAZS,3050);
@@ -135,17 +137,20 @@ void ShowPage::createView()
 }
 
 
+
 void ShowPage::slotStartExecute()
 {
    qInfo(logInfo()) << Q_FUNC_INFO << QDateTime::currentDateTime().toString("dd-MM-yyyy hh:mm:ss.zzz") <<  "Thread started";
 }
 
-void ShowPage::slotStopExecute(int term)
+void ShowPage::slotStopExecute(int row)
 {
+    term = row;
     if(checkOnline->resultAt(term)) {
         ui->tableWidget->item(term, 2)->setText("ON LINE");
         ui->tableWidget->item(term,2)->setTextColor("Green");
         ui->tableWidget->item(term, 2)->setIcon(QIcon(":/Icons/connect.png"));
+        getFuelsList(term);
     } else {
         ui->tableWidget->item(term, 2)->setText("OFF LINE");
         ui->tableWidget->item(term, 2)->setTextColor("Red");
@@ -165,6 +170,58 @@ void ShowPage::slotFinished()
     ui->tableWidget->showColumn(3);
     ui->tableWidget->showColumn(4);
 }
+
+
+void ShowPage::getFuelsList(int idx)
+{
+//    qInfo(logInfo()) << Q_FUNC_INFO  << modelConnections->record(idx);
+
+    AzsFuelList * azsFuels = new AzsFuelList(modelConnections->record(idx));
+
+    QThread *th = new QThread();
+
+    azsFuels->moveToThread(th);
+
+    connect(th,&QThread::started,azsFuels,&AzsFuelList::slotGetList);
+
+    connect(azsFuels,&AzsFuelList::signalSendFuelsList,this,&ShowPage::slotGetFuellist,Qt::DirectConnection);
+    connect(azsFuels,&AzsFuelList::signalFinish, th, &QThread::quit);
+    connect(azsFuels,&AzsFuelList::signalFinish, azsFuels, &AzsFuelList::deleteLater);
+    connect(th, &QThread::finished,th, &QThread::deleteLater);
+
+    ///connect(azsFuels,&AzsFuelList::signalFinished,this,&ShowPage::slotStopExecute);
+    //        connect(checkStatus,&CheckAzsStatus::finished,thread,&QThread::quit);
+    //        connect(checkStatus,&CheckAzsStatus::finished,checkStatus,&CheckAzsStatus::deleteLater);
+    //        connect(thread,&QThread::finished, thread, &QThread::deleteLater);
+
+    th->start();
+
+}
+
+
+void ShowPage::slotGetFuellist(QVector<LisstFuelClass> lfVec)
+{
+    QWidget *tableListWidget = new QWidget();
+
+    QTableWidget *m_fTable = new QTableWidget;
+
+
+
+    m_fTable->setColumnCount(3);
+    m_fTable->setHorizontalHeaderLabels(QStringList() << "Резервуар" << "Кратко" << "Полное");
+    m_fTable->horizontalHeader()->setStretchLastSection(true);
+    m_fTable->verticalHeader()->hide();
+    for(int i=0; i<lfVec.size(); ++i){
+        m_fTable->insertRow(i);
+        m_fTable->setItem(i, 0, new QTableWidgetItem(QString::number(lfVec.at(i).tankID())));
+        m_fTable->setItem(i, 1, new QTableWidgetItem(lfVec.at(i).shortName()));
+        m_fTable->setItem(i, 2, new QTableWidgetItem(lfVec.at(i).fuelName()));
+    }
+
+    ui->tableWidget->setCellWidget( term, 4, m_fTable);
+
+}
+
 
 ProgressBarDelegate::ProgressBarDelegate( QObject* parent ) : QStyledItemDelegate( parent ) {
 }
